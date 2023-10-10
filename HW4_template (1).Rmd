@@ -1,0 +1,132 @@
+---
+title: STAT 230 Homework 4
+author: "My Name"
+output: pdf_document
+---
+```{r, include=FALSE}
+library(Sleuth3)  
+library(ggplot2)
+library(stargazer)
+```
+
+**1.** (Modification of Exercise 10.9.) Read the exercise 10.9 statement, but answer the following. Some R code is given for this question (I'm trying to save you some time :-)). When \textbf{eval = FALSE} is shown in the template, make sure you remove this before compiling the homework!
+
+```{r}
+data(ex0722, package = "Sleuth3")
+```
+
+(a) How many degrees of freedom are there in the estimate of $\sigma$?
+
+(b) Using the summary output below, what is the $p$-value for the test of the hypothesis that the slope of the regression of log force on log height is the same for species 2 as it is for species 1?
+
+```{r}
+# change factor level order to match book:
+ex0722$Species <- factor(ex0722$Species,
+                         levels = levels(ex0722$Species)[c(2,3,1)])
+# fit model:
+crab_model <- lm(log(Force) ~ log(Height) * Species, data = ex0722)
+summary(crab_model)
+```
+
+\newpage
+
+(c) Give a 95% confidence interval for the amount by which the slope on log height for Lophopanopeus bellus exceeds the slope on log height for Cancer productus. Note: the critical value is `qt(0.975, df = 32)` = 2.04. (Hint: this question is asking about the difference between two coefficients in the table above. Below is the covariance matrix for the $\beta$'s, which you will need to answer this question.)
+
+```{r}
+vcov(crab_model)
+```
+
+```{r, echo = FALSE}
+V <- vcov(crab_model)
+rownames(V) <- c("intercept", "log(ht)", "lb", "cp", "log(ht):lb", "log(ht):cp")
+colnames(V) <- c("intercept", "log(ht)", "lb", "cp", "log(ht):lb", "log(ht):cp")
+V
+```
+
+(d) Make a plot of log(Force) vs. log(Height), color-code the plot by species and with separate linear relationships estimated for each species. Comment on the relationships, specifically relating to the estimated coefficients from the interaction model.
+
+
+**2.** Load the following data:
+
+```{r}
+babiesBwt <- read.csv('https://www.math.carleton.edu/ckelling/data/babiesBwt.csv', header=TRUE)
+```
+
+The data record information on 1171 baby boys born in California in the 1960’s. The variables include `bwt` (babies' birth weights in ounces), `gestation` (gestation length in
+days), `age` (mothers' ages), `height` (mothers' heights in inches), `weight` (mothers' weights in pounds), `first` (whether or not this was the mothers' first baby), and `smoke` (the mothers' smoking statuses).
+
+(a) Make a color-coded  plot of the birth weights against gestation, coloring by whether or not the mother smokes, and add separate regression lines according to the maternal smoking status. Do the lines appear to have different slopes? What does this suggest about a possible interaction between gestation and smoker status? (Note: to save time, I am not asking you to create separate plots exploring the relationship with each predictor variable, but in a full analysis of these data you would need to do that.)
+
+(b) Fit a linear model of birth weight on all of the other variables, including an interaction term between gestation length and smoker status. Give the estimated coefficients and their standard errors.
+
+(c) Find a 95% confidence interval for the effect of gestation length on birth weight, for smokers. Interpret the interval in context. (Hint: you will need to use the `vcov` command.)
+
+(d) Find a 95% confidence interval for the *difference* in effects of gestation between smokers and nonsmokers. Interpret the interval in context. (Hint: the effect of interest is one of the coefficients in the model.)
+
+
+**3.** Load the following dataset:
+
+```{r,echo=TRUE}
+ryegrass <- read.csv('https://www.math.carleton.edu/ckelling/data/ryegrass.csv',
+                       header=TRUE)
+```
+
+These are data from a field experiment studying the effect of manuring on the yield of four varieties of ryegrass. Ryegrass was planted on separate plots of land. Four different ryegrass strains were studied, and the plots were fertilized using either a heavy manuring condition or a "regular" manuring condition. The variables are:
+
+- `Strain`: the strain of ryegrass
+- `Manure`: Heavy (`H`) or regular (`A`)
+- `Yield`: The yield in dry matter weight (kg)
+
+(for this problem, ignore the variable called `Block`)
+
+(a) Plot the yields by manuring condition and strain, using the code below, and describe the nature of the interaction.
+
+```{r}
+ggplot(ryegrass, aes(x = Strain, y = Yield, color = Manure)) + geom_point() +
+  labs(y = "Yield (kg)") + scale_color_discrete(labels = c("Regular", "Heavy"))
+```
+
+(b) Fit the linear model of Yield on the two treatment variables, and include an interaction between strain and manuring. Explain how the signs of the three coefficient estimates for the interaction terms relate to the interactions you described visually in part (a).
+
+(c) Check the linearity, constant variance, and normality assumptions. Make sure to plot the residuals against both of the predictors in the model.
+
+(d) Perform an ANOVA $F$-test to formally test whether there is evidence that at least one of the interaction terms isn't zero. Give a $p$-value and state your conclusion.
+
+(e) Take a look at the three $t$-test $p$-values for the interaction terms. Explain what each is testing (an explanation for one of the terms will suffice here).
+
+(f) What conclusion would you draw if you were to use the individual $t$-tests to assess the combined significance of an interaction between manuring and strain? Why is this inappropriate?
+
+
+**4.**  ANOVA 
+Below is the  ANOVA table for the regression of percent bodyfat (\%) on midarm, triceps, and thigh skinfold measurements (cm): $\mu(\textrm{bodyfat}| X) = \beta_0 + \beta_1 \textrm{midarm} + \beta_2 \textrm{triceps} + \beta_3 \textrm{thigh}$.   Use this output to answer the questions (a)-(f) that follow along with the fact that the total sum of squares SST for bodyfat is $SST = 495.3895$.
+
+```
+> bodyfat.lm<- lm(bodyfat ~ midarm + triceps + thigh)
+> anova(bodyfat.lm)
+Analysis of Variance Table
+
+Response: bodyfat
+          Df Sum of Sq  Mean Sq  F Value     Pr(F)
+   midarm  1   10.0516  10.0516  1.63433 0.2193400
+  triceps  1  379.4037 379.4037 61.68860 0.0000007
+    thigh  1        A?   7.5293  1.22421 0.2848944
+Residuals 16   98.4049       B?
+```
+
+(a) 
+Fill in the ?'s (A and B).
+
+(b) 
+How many observations ($n$) are in the data set?
+
+(c) 
+What is the estimated model standard deviation $\hat{\sigma}$ for the full model?
+
+(d) 
+What is the SSreg(midarm, triceps, thigh), the regression sum of squares for the regression of bodyfat on midarm, triceps, and thigh?
+
+(e) 
+Suppose you want to test the significance of thigh in the model that already includes midarm and triceps. Use the information above to test this with an F test. State your null and alternative models, give the F test stat and p-value for this comparison, and give your conclusion.
+
+
+**Suggested exercises**: 10.3, 10.5
