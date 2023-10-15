@@ -17,7 +17,11 @@ data(ex0722, package = "Sleuth3")
 
 (a) How many degrees of freedom are there in the estimate of $\sigma$?
 
+\textbf{Answer:} 32
+
 (b) Using the summary output below, what is the $p$-value for the test of the hypothesis that the slope of the regression of log force on log height is the same for species 2 as it is for species 1?
+
+\textbf{Answer:} .00144
 
 ```{r}
 # change factor level order to match book:
@@ -31,6 +35,22 @@ summary(crab_model)
 \newpage
 
 (c) Give a 95% confidence interval for the amount by which the slope on log height for Lophopanopeus bellus exceeds the slope on log height for Cancer productus. Note: the critical value is `qt(0.975, df = 32)` = 2.04. (Hint: this question is asking about the difference between two coefficients in the table above. Below is the covariance matrix for the $\beta$'s, which you will need to answer this question.)
+
+\textbf{Answer:} We can use the question CI = (Dif of coefficients) +/- (Crit Value) x (SE of the difference).
+
+the dif in Coefficients is 2.5653 - 1.6601 = .9052
+
+the SE of the difference = sqrt(Var(Difference in Coefficients))
+=Variance(log(height):lb) + Variance(log(height):cp) - 2*cov(log(height):lb, log(height):cp)
+
+= 0.5407777 + 0.6224210 - 2*0.2370226 = 0.6891535
+
+so SE = sqrt(0.6891535) = 0.8301527
+
+
+So 95% Conf int = .9052 +/- 2.04*0.8301527
+
+= the 95% confidence interval is [-.7883 ,2.5987]
 
 ```{r}
 vcov(crab_model)
