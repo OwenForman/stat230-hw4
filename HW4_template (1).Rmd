@@ -77,6 +77,18 @@ days), `age` (mothers' ages), `height` (mothers' heights in inches), `weight` (m
 
 (a) Make a color-coded  plot of the birth weights against gestation, coloring by whether or not the mother smokes, and add separate regression lines according to the maternal smoking status. Do the lines appear to have different slopes? What does this suggest about a possible interaction between gestation and smoker status? (Note: to save time, I am not asking you to create separate plots exploring the relationship with each predictor variable, but in a full analysis of these data you would need to do that.)
 
+```{r}
+ggplot(babiesBwt, aes(x = gestation, y = bwt, color = smoke)) +
+  geom_point() +
+  labs(title = "Birth Weight vs Gestation (by smoker status)",
+       x = "Gestation (days)",
+       y = "Birth Weight (ounces)") +
+  scale_color_discrete(name = "Smoker Status") +
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+
 (b) Fit a linear model of birth weight on all of the other variables, including an interaction term between gestation length and smoker status. Give the estimated coefficients and their standard errors.
 
 (c) Find a 95% confidence interval for the effect of gestation length on birth weight, for smokers. Interpret the interval in context. (Hint: you will need to use the `vcov` command.)
